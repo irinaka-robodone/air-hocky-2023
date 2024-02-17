@@ -19,3 +19,5 @@
     - 後: ↓
     - 左: ←
     - 右: →
+
+<strong>[Demo](https://irinaka-robodone.github.io/air-hocky-2023/air-hockey-2023)</strong>
