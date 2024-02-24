@@ -15,6 +15,7 @@ def create_hockey(world: World, x: int, y: int, color: int, up: int, down: int, 
     entity = world.create_entity()
     world.add_component_to_entity(entity, Position, x = x, y = y)
     world.add_component_to_entity(entity, Velocity, x = 0, y = 0, speed = speed, default_speed = speed)
+    world.add_component_to_entity(entity, Acceleration, x = 0, y = 0)
     world.add_component_to_entity(entity, Controlable, up = up, down = down, left = left, right = right)
     world.add_component_to_entity(entity, Collidable)
     world.add_component_to_entity(entity, Hockey, id = entity, color = color, radius = 20)
@@ -37,10 +38,17 @@ def create_puck(world: World, x: int, y: int, dx: int = 1, dy: int = 1, speed: i
         int: The entity id of created puck.
     """
     entity = world.create_entity()
+    # ポジションコンポーネントを追加する。
     world.add_component_to_entity(entity, Position, x = x, y = y)
+    # ベロシティ(速度)コンポーネントを追加する。
     world.add_component_to_entity(entity, Velocity, x = dx, y = dy, speed = speed, default_speed = speed)
+    # アクセラレーション(加速度)コンポーネントを追加する。
+    world.add_component_to_entity(entity, Acceleration, x = 0, y = 0)
+    # コライダブル(衝突可能)コンポーネントを追加する。
     world.add_component_to_entity(entity, Collidable)
+    # パックコンポーネントを追加する。
     world.add_component_to_entity(entity, Puck, id = entity, radius = 10)
+    # 作成したエンティティのIDを返す。
     return entity
 
 def create_field(world: World, width: int = 580, height: int = 380, goal_width: int = 100) -> int:

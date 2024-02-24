@@ -12,6 +12,11 @@ class Velocity(Component):
 class Position(Component):
     x: int = 0
     y: int = 0
+    
+@dataclass
+class Acceleration(Component):
+    x: int = 0
+    y: int = 0
 
 @dataclass
 class Controlable(Component):

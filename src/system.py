@@ -55,18 +55,37 @@ class SysControl(System):
         self.world = world
     
     def process(self):
-        for ent, (pos, vel, cont) in self.world.get_components(Position, Velocity, Controlable):
-            vel.x = 0
-            vel.y = 0
+        for ent, (pos, vel, acc, cont) in self.world.get_components(Position, Velocity, Acceleration, Controlable):
+            acc.x -= acc.x * 0.1
+            acc.y -= acc.y * 0.1
+            
+            if abs(vel.x) < 0.01:
+                vel.x = 0
+                acc.x = 0
+            if abs(vel.y) < 0.01:
+                vel.y = 0
+                acc.y = 0
+            
             if pyxel.btn(cont.left):
-                vel.x = -1
+                acc.x = - 0.04
             if pyxel.btn(cont.right):
-                vel.x = 1
+                acc.x = 0.04
             if pyxel.btn(cont.up):
-                vel.y = -1
+                acc.y = - 0.04
             if pyxel.btn(cont.down):
-                vel.y = 1
-                
+                acc.y = 0.04
+            
+            vel.x += acc.x
+            vel.y += acc.y
+            
+            if abs(acc.x) < 0.02:
+                vel.x -= vel.x * 0.2
+            if abs(acc.y) < 0.02:
+                vel.y -= vel.y * 0.2
+            
+            vel.x = min(max(vel.x, -5), 5)
+            vel.y = min(max(vel.y, -5), 5)
+            
 class SysCollision(System):
     def __init__(self, world: World, priority: int, **kwargs) -> None:
         super().__init__(world)
