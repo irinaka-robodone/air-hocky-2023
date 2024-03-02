@@ -1,3 +1,10 @@
+"""
+1.「ｘ」 パックとホッケーがあたったら跳ね返るしくみ
+1. 「」ゲームの初期化
+1. 「×」ホッケーを動かす仕組み
+1. 「」パックを動かす仕組み
+1. 「ｘ」スコアを加算する仕組み（勝利判定も）
+"""
 from pigframe import *
 import pyxel
 
@@ -14,6 +21,8 @@ class SysMove(System):
         # 位置と速度コンポーネントを持つエンティティを取得して、移動処理を行う。
         for ent, (pos, vel) in self.world.get_components(Position, Velocity):
             # 速度（vel）を使って位置（pos）を更新する。
+            vel.speed *= 0.99
+            vel.speed *= 0.99
             pos.x += vel.x * vel.speed
             pos.y += vel.y * vel.speed
             
@@ -56,17 +65,24 @@ class SysControl(System):
     
     def process(self):
         for ent, (pos, vel, cont) in self.world.get_components(Position, Velocity, Controlable):
-            vel.x = 0
-            vel.y = 0
-            if pyxel.btn(cont.left):
-                vel.x = -1
-            if pyxel.btn(cont.right):
-                vel.x = 1
+            vel.y=0
+            vel.x=0
+            if pyxel.btnp(cont.left) or pyxel.btnp(cont.down) \
+                or pyxel.btnp(cont.right) or pyxel.btnp(cont.up):
+                vel.speed = vel.default_speed
             if pyxel.btn(cont.up):
-                vel.y = -1
+                vel.y=-1
+                vel.speed *= 1.01
             if pyxel.btn(cont.down):
-                vel.y = 1
-                
+                vel.y=1
+                vel.speed *= 1.01
+            if pyxel.btn(cont.left):
+                vel.x=-1  
+                vel.speed *=1.01
+            if pyxel.btn(cont.right):
+                vel.x=1
+                vel.speed *=1.01
+            
 class SysCollision(System):
     def __init__(self, world: World, priority: int, **kwargs) -> None:
         super().__init__(world)
@@ -75,18 +91,22 @@ class SysCollision(System):
     def process(self):
         for ent1, (pos1, vel1, coll1) in self.world.get_components(Position, Velocity, Collidable):
             for ent2, (pos2, vel2, coll2) in self.world.get_components(Position, Velocity, Collidable):
-                if ent1 != ent2:
-                    if abs(pos1.x - pos2.x) < 20 and abs(pos1.y - pos2.y) < 20:
-                        vel1.x *= -1
-                        vel1.y *= -1
-                        vel2.x *= -1
-                        vel2.y *= -1
-                        pos1.x += vel1.x * vel1.speed
-                        pos1.y += vel1.y * vel1.speed
-                        pos2.x += vel2.x * vel2.speed
-                        pos2.y += vel2.y * vel2.speed
-                        break
-                    
+                if ent1 == ent2:
+                    continue
+                if abs(pos1.x-pos2.x) < 20 and abs(pos1.y-pos2.y) < 20:
+                    vel1.speed = 4
+                    vel2.speed = 4
+                    vel1.x = vel1.x*-1
+                    vel2.x*=-1
+                    vel1.y*=-1
+                    vel2.y*=-1
+                    pos1.x += vel1.x * vel1.speed
+                    pos1.y += vel1.y * vel1.speed
+                    pos2.x += vel2.x * vel2.speed
+                    pos2.y += vel2.y * vel2.speed
+                    break
+                
+                
 class SysScore(System):
     def __init__(self, world: World, priority: int, **kwargs) -> None:
         super().__init__(world)
@@ -143,13 +163,14 @@ class SysInit(System):
         # 結果を初期化する
         _, (result) = self.world.get_component(Result)[0]
         result.winner = None
+        
         result.scores = {
             0: 0,
             1: 0
         }
-        # 自分のスコアを初期化する
-        for _, (score) in self.world.get_component(Score):
+        
+        for _,(score) in self.world.get_component(Score):
             score.score = 0
-        # 動く物体の速さを初期化する
-        for _, (vel) in self.world.get_component(Velocity):
+            
+        for _,(vel) in self.world.get_component(Velocity):
             vel.speed = vel.default_speed
