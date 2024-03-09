@@ -6,6 +6,7 @@ class Velocity(Component):
     x: int = 0
     y: int = 0
     weight: int = 1
+    max_speed: int = 30
 
 @dataclass
 class Position(Component):

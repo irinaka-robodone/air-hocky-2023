@@ -57,18 +57,18 @@ def main():
     app.current_scene = "title"
     
     # エンティティの生成
-    create_hockey(app, 100, 240, weight=8, color=2, score = 5, **P1KEYS)
-    create_hockey(app, 540, 240, weight=8, color=3, score = 5, **P2KEYS)
+    create_hockey(app, 100, 240, weight=20, color=2, score = 5, **P1KEYS)
+    create_hockey(app, 540, 240, weight=20, color=3, score = 5, **P2KEYS)
     create_field(app, 580, 320, goal_width = 80)
-    create_puck(app, app.SCREEN_SIZE[0]//2, app.SCREEN_SIZE[1]//2, dx=1, dy=1, weight=4, radius=6)
+    create_puck(app, app.SCREEN_SIZE[0]//2, app.SCREEN_SIZE[1]//2, dx=1, dy=1, weight=1, radius=6)
     create_play_status(app)
     
     # システム処理の登録
     app.add_system_to_scenes(SysInit, "title", 0)
-    app.add_system_to_scenes(SysMove, "game", 0)
-    app.add_system_to_scenes(SysControl, "game", 1)
+    app.add_system_to_scenes(SysMove, "game", 4)
+    app.add_system_to_scenes(SysControl, "game", 3)
     app.add_system_to_scenes(SysCollision, "game", 2)
-    app.add_system_to_scenes(SysScore, "game", 3)
+    app.add_system_to_scenes(SysScore, "game", 1)
     
     # スクリーン処理の登録
     app.add_screen_to_scenes(ScTitle, "title")

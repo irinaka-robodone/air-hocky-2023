@@ -22,6 +22,9 @@ class SysMove(System):
         for ent, (pos, vel) in self.world.get_components(Position, Velocity):
             # 速度（vel）を使って位置（pos）を更新する。
             
+            vel.x = min(max(-1 * vel.max_speed, vel.x), vel.max_speed)
+            vel.y = min(max(-1 * vel.max_speed, vel.y), vel.max_speed)
+            
             pos.x += vel.x
             pos.y += vel.y
             
@@ -67,25 +70,29 @@ class SysControl(System):
     
     def process(self):
         for ent, (pos, vel, cont) in self.world.get_components(Position, Velocity, Controlable):
-            vel.x = 0
-            vel.y = 0
             
             if pyxel.btnp(cont.up)or pyxel.btnp(cont.down)\
                 or pyxel.btnp(cont.left)or pyxel.btnp(cont.right):
                 pass
             
-            if pyxel.btn(cont.left):
-                vel.x = -4
-                vel.x *= 1.01
-            if pyxel.btn(cont.right):
+            if vel.x < 0 and pyxel.btnp(cont.right):
                 vel.x = 4
-                vel.x *= 1.01
-            if pyxel.btn(cont.up):
-                vel.y = -4
-                vel.y *= 1.01
-            if pyxel.btn(cont.down):
+            elif vel.x > 0 and pyxel.btnp(cont.left):
+                vel.x = -4
+            
+            if vel.y < 0 and pyxel.btnp(cont.down):
                 vel.y = 4
-                vel.y *= 1.01
+            elif vel.y > 0 and pyxel.btnp(cont.up):
+                vel.y = -4
+            
+            if pyxel.btn(cont.left):
+                vel.x -= 0.5
+            if pyxel.btn(cont.right):
+                vel.x += 0.5
+            if pyxel.btn(cont.up):
+                vel.y -= 0.5
+            if pyxel.btn(cont.down):
+                vel.y += 0.5
                 
 class SysCollision(System):
     def __init__(self, world: World, priority: int, **kwargs) -> None:
@@ -93,18 +100,42 @@ class SysCollision(System):
         self.world = world
     
     def process(self):
+        checked_pairs = []
         for ent1, (pos1, vel1, coll1) in self.world.get_components(Position, Velocity, Collidable):
             for ent2, (pos2, vel2, coll2) in self.world.get_components(Position, Velocity, Collidable):
                 if ent1 == ent2:
                     continue
+                checked = False
+                
+                for checked_pair in checked_pairs:
+                    if [ent1, ent2] == checked_pair or [ent2, ent1] == checked_pair:
+                        checked = True
+                
+                if checked:
+                    continue
+                
                 if abs(pos1.x-pos2.x) < 20 and abs(pos1.y-pos2.y) < 20:
-                    print(vel1.x)
-                    vel1.x = (vel2.x * vel2.weight + vel1.x * vel1.weight)/vel1.weight
-                    vel1.y = (vel2.y * vel2.weight + vel1.y * vel1.weight)/vel1.weight
-                    vel2.x = (vel1.x * vel1.weight + vel2.x * vel2.weight)/vel2.weight
-                    vel2.y = (vel1.y * vel1.weight + vel2.y * vel2.weight)/vel2.weight
-                    print(vel1.x)
-                    break
+                    print(ent1, ent2)
+                    print(vel1.x, vel1.weight, vel2.x, vel2.weight)
+                    # 完全弾性衝突と見立てて衝突した後の速度を更新する。
+                    v1x = (vel2.x * 2 * vel2.weight + vel1.x * (vel1.weight - vel2.weight))/(vel1.weight + vel2.weight)
+                    v1y = (vel2.y * 2 * vel2.weight + vel1.y * (vel1.weight - vel2.weight))/(vel1.weight + vel2.weight)
+                    v2x = (vel1.x * 2 * vel1.weight + vel2.x * (vel2.weight - vel1.weight))/(vel2.weight + vel1.weight)
+                    v2y = (vel1.y * 2 * vel1.weight + vel2.y * (vel2.weight - vel1.weight))/(vel2.weight + vel1.weight)
+                    
+                    vel1.x = v1x
+                    vel1.y = v1y
+                    vel2.x = v2x
+                    vel2.y = v2y
+                    
+                    vel1.x = min(max(-1 * vel1.max_speed, vel1.x), vel1.max_speed)
+                    vel1.y = min(max(-1 * vel1.max_speed, vel1.y), vel1.max_speed)
+                    vel2.x = min(max(-1 * vel2.max_speed, vel2.x), vel2.max_speed)
+                    vel2.y = min(max(-1 * vel2.max_speed, vel2.y), vel2.max_speed)
+                    
+                    checked_pairs.append([ent1, ent2])
+                    print(vel1.x, vel1.weight, vel2.x, vel2.weight)
+                    # break
                 
                 
 class SysScore(System):
