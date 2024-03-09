@@ -5,8 +5,7 @@ from pigframe import *
 class Velocity(Component):
     x: int = 0
     y: int = 0
-    speed: int = 1
-    default_speed: int = 1
+    weight: int = 1
 
 @dataclass
 class Position(Component):

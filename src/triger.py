@@ -10,7 +10,6 @@ def triger_result(world: World) -> bool:
     """
     # スコアが0のプレイヤーがいたら結果ステートへ遷移（変化）する。
     _, (result) = world.get_component(Result)[0]
-    print(result.scores)
     count_player = 0
     for ent, (score) in world.get_component(Score):
         if 4 < score.score:

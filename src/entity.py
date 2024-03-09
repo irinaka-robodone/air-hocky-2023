@@ -1,7 +1,7 @@
 from pigframe import *
 from component import *
 
-def create_hockey(world: World, x: int, y: int, color: int, up: int, down: int, left: int, right: int, speed: int = 1, score=Score) -> int:
+def create_hockey(world: World, x: int, y: int, color: int, up: int, down: int, left: int, right: int, weight: int = 1, score=Score) -> int:
     """Create a hockey entity.
 
     Args:
@@ -14,15 +14,14 @@ def create_hockey(world: World, x: int, y: int, color: int, up: int, down: int, 
     """
     entity = world.create_entity()
     world.add_component_to_entity(entity, Position, x = x, y = y)
-    world.add_component_to_entity(entity, Velocity, x = 0, y = 0, speed = speed, default_speed = speed)
-    world.add_component_to_entity(entity, Acceleration, x = 0, y = 0)
+    world.add_component_to_entity(entity, Velocity, x = 0, y = 0, weight = weight)
     world.add_component_to_entity(entity, Controlable, up = up, down = down, left = left, right = right)
     world.add_component_to_entity(entity, Collidable)
     world.add_component_to_entity(entity, Hockey, id = entity, color = color, radius = 20)
     world.add_component_to_entity(entity, Score, score = score)
     return entity
 
-def create_puck(world: World, x: int, y: int, dx: int = 1, dy: int = 1, speed: int = 1, radius: int = 6) -> int:
+def create_puck(world: World, x: int, y: int, dx: int = 1, dy: int = 1, weight: int = 1, radius: int = 6) -> int:
     """Create a puck entity.
 
     Args:
@@ -41,9 +40,7 @@ def create_puck(world: World, x: int, y: int, dx: int = 1, dy: int = 1, speed: i
     # ポジションコンポーネントを追加する。
     world.add_component_to_entity(entity, Position, x = x, y = y)
     # ベロシティ(速度)コンポーネントを追加する。
-    world.add_component_to_entity(entity, Velocity, x = dx, y = dy, speed = speed, default_speed = speed)
-    # アクセラレーション(加速度)コンポーネントを追加する。
-    world.add_component_to_entity(entity, Acceleration, x = 0, y = 0)
+    world.add_component_to_entity(entity, Velocity, x = dx, y = dy, weight = weight)
     # コライダブル(衝突可能)コンポーネントを追加する。
     world.add_component_to_entity(entity, Collidable)
     # パックコンポーネントを追加する。

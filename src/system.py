@@ -21,10 +21,12 @@ class SysMove(System):
         # 位置と速度コンポーネントを持つエンティティを取得して、移動処理を行う。
         for ent, (pos, vel) in self.world.get_components(Position, Velocity):
             # 速度（vel）を使って位置（pos）を更新する。
-            vel.speed *= 0.99
-            vel.speed *= 0.99
-            pos.x += vel.x * vel.speed
-            pos.y += vel.y * vel.speed
+            
+            pos.x += vel.x
+            pos.y += vel.y
+            
+            vel.x *= 0.95
+            vel.y *= 0.95
             
             # ゴールに入ったときはパックの跳ね返りを行わない。
             # 左のゴールに入ったときの例外処理。
@@ -64,25 +66,26 @@ class SysControl(System):
         self.world = world
     
     def process(self):
-        for ent, (pos, vel, acc, cont) in self.world.get_components(Position, Velocity, Acceleration, Controlable):
-            acc.x -= acc.x * 0.1
-            acc.y -= acc.y * 0.1
+        for ent, (pos, vel, cont) in self.world.get_components(Position, Velocity, Controlable):
+            vel.x = 0
+            vel.y = 0
             
-            if abs(vel.x) < 0.01:
-                vel.x = 0
-                acc.x = 0
-            if abs(vel.y) < 0.01:
-                vel.y = 0
-                acc.y = 0
+            if pyxel.btnp(cont.up)or pyxel.btnp(cont.down)\
+                or pyxel.btnp(cont.left)or pyxel.btnp(cont.right):
+                pass
             
             if pyxel.btn(cont.left):
-                vel.x = -1
+                vel.x = -4
+                vel.x *= 1.01
             if pyxel.btn(cont.right):
-                vel.x = 1
+                vel.x = 4
+                vel.x *= 1.01
             if pyxel.btn(cont.up):
-                vel.y = -1
+                vel.y = -4
+                vel.y *= 1.01
             if pyxel.btn(cont.down):
-                vel.y = 1
+                vel.y = 4
+                vel.y *= 1.01
                 
 class SysCollision(System):
     def __init__(self, world: World, priority: int, **kwargs) -> None:
@@ -95,16 +98,12 @@ class SysCollision(System):
                 if ent1 == ent2:
                     continue
                 if abs(pos1.x-pos2.x) < 20 and abs(pos1.y-pos2.y) < 20:
-                    vel1.speed = 4
-                    vel2.speed = 4
-                    vel1.x = vel1.x*-1
-                    vel2.x*=-1
-                    vel1.y*=-1
-                    vel2.y*=-1
-                    pos1.x += vel1.x * vel1.speed
-                    pos1.y += vel1.y * vel1.speed
-                    pos2.x += vel2.x * vel2.speed
-                    pos2.y += vel2.y * vel2.speed
+                    print(vel1.x)
+                    vel1.x = (vel2.x * vel2.weight + vel1.x * vel1.weight)/vel1.weight
+                    vel1.y = (vel2.y * vel2.weight + vel1.y * vel1.weight)/vel1.weight
+                    vel2.x = (vel1.x * vel1.weight + vel2.x * vel2.weight)/vel2.weight
+                    vel2.y = (vel1.y * vel1.weight + vel2.y * vel2.weight)/vel2.weight
+                    print(vel1.x)
                     break
                 
                 
@@ -149,7 +148,8 @@ class SysScore(System):
                     vel.x *= -1
                     vel.y *= -1
                     # パックの速度を少し上げる。
-                    vel.speed *= 1.1
+                    vel.x *= 1.1
+                    vel.y *= 1.1
                     return
                     
                 # ここまでのホッケーの数をカウントする。
@@ -174,4 +174,5 @@ class SysInit(System):
             score.score = 0
             
         for _,(vel) in self.world.get_component(Velocity):
-            vel.speed = vel.default_speed
+            vel.x = 1
+            vel.y = 1

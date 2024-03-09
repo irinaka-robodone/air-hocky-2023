@@ -25,14 +25,14 @@ class ScHockey(Screen):
         for ent, (hock, pos, vel) in self.world.get_components(Hockey, Position, Velocity):
             pyxel.circb(pos.x, pos.y, hock.radius, 7)
             pyxel.circ(pos.x, pos.y, hock.radius, hock.color)
-            pyxel.line(pos.x, pos.y, pos.x + vel.x * hock.radius, pos.y + vel.y * hock.radius, 7)
+            # pyxel.line(pos.x, pos.y, pos.x + vel.x * hock.radius, pos.y + vel.y * hock.radius, 7)
             
 class ScPuck(Screen):
     def draw(self):
         for ent, (puck, pos, vel) in self.world.get_components(Puck, Position, Velocity):
             pyxel.circ(pos.x, pos.y, puck.radius, 13)
             pyxel.circb(pos.x, pos.y, puck.radius, 0)
-            pyxel.line(pos.x, pos.y, pos.x + vel.x * puck.radius, pos.y + vel.y * puck.radius, 0)
+            # pyxel.line(pos.x, pos.y, pos.x + vel.x * puck.radius, pos.y + vel.y * puck.radius, 0)
             
 class ScField(Screen):
     def draw(self):

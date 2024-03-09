@@ -17,6 +17,7 @@ P1KEYS = {
 
 P2KEYS = {
     "up": pyxel.KEY_UP,
+    
     "down": pyxel.KEY_DOWN,
     "left": pyxel.KEY_LEFT,
     "right": pyxel.KEY_RIGHT
@@ -56,10 +57,10 @@ def main():
     app.current_scene = "title"
     
     # エンティティの生成
-    create_hockey(app, 100, 240, speed=8, color=2, score = 5, **P1KEYS)
-    create_hockey(app, 540, 240, speed=8, color=3, score = 5, **P2KEYS)
+    create_hockey(app, 100, 240, weight=8, color=2, score = 5, **P1KEYS)
+    create_hockey(app, 540, 240, weight=8, color=3, score = 5, **P2KEYS)
     create_field(app, 580, 320, goal_width = 80)
-    create_puck(app, app.SCREEN_SIZE[0]//2, app.SCREEN_SIZE[1]//2, dx=1, dy=1, speed=4, radius=6)
+    create_puck(app, app.SCREEN_SIZE[0]//2, app.SCREEN_SIZE[1]//2, dx=1, dy=1, weight=4, radius=6)
     create_play_status(app)
     
     # システム処理の登録
