@@ -45,7 +45,7 @@ class App(World):
     def update(self):
         self.process_systems()
         self.process_events()
-        self.level_manager.process()
+        self.scene_manager.process()
         
     def draw(self):
         pyxel.cls(1)
