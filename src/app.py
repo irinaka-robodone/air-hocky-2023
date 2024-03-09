@@ -52,7 +52,7 @@ class App(World):
     
 def main():
     app = App()
-    app.add_scenes(["title", "game", "result"])
+    app.add_scenes(["title", "gwame", "result"])
     app.current_scene = "title"
     
     # エンティティの生成
