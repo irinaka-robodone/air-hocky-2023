@@ -1,7 +1,9 @@
 from pigframe import *
 from component import *
 
-def create_hockey(world: World, x: int, y: int, color: int, up: int, down: int, left: int, right: int, weight: int = 1, score=Score) -> int:
+def create_hockey(world: World, x: int, y: int, color: int, 
+                up: int, down: int, left: int, right: int, weight: int = 1,
+                radius: int = 20) -> int:
     """Create a hockey entity.
 
     Args:
@@ -17,11 +19,12 @@ def create_hockey(world: World, x: int, y: int, color: int, up: int, down: int, 
     world.add_component_to_entity(entity, Velocity, x = 0, y = 0, weight = weight)
     world.add_component_to_entity(entity, Controlable, up = up, down = down, left = left, right = right)
     world.add_component_to_entity(entity, Collidable)
-    world.add_component_to_entity(entity, Hockey, id = entity, color = color, radius = 20)
-    world.add_component_to_entity(entity, Score, score = score)
+    world.add_component_to_entity(entity, Hockey, id = entity, color = color, radius = radius)
+    world.add_component_to_entity(entity, Score)
     return entity
 
-def create_puck(world: World, x: int, y: int, dx: int = 1, dy: int = 1, weight: int = 1, radius: int = 6) -> int:
+def create_puck(world: World, x: int, y: int, dx: int = 1, dy: int = 1, weight: int = 1,
+                radius: int = 6) -> int:
     """Create a puck entity.
 
     Args:
@@ -44,7 +47,7 @@ def create_puck(world: World, x: int, y: int, dx: int = 1, dy: int = 1, weight: 
     # コライダブル(衝突可能)コンポーネントを追加する。
     world.add_component_to_entity(entity, Collidable)
     # パックコンポーネントを追加する。
-    world.add_component_to_entity(entity, Puck, id = entity, radius = 10)
+    world.add_component_to_entity(entity, Puck, id = entity, radius = radius)
     # 作成したエンティティのIDを返す。
     return entity
 

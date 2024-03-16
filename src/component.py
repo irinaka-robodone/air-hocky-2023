@@ -6,7 +6,7 @@ class Velocity(Component):
     x: int = 0
     y: int = 0
     weight: int = 1
-    max_speed: int = 30
+    max_speed: int = 100
 
 @dataclass
 class Position(Component):
@@ -33,12 +33,12 @@ class Collidable(Component):
 class Hockey(Component):
     id: int = None
     color: int = 2
-    radius: int = 20
+    radius: int = 40
 
 @dataclass
 class Puck(Component):
     id: int = None
-    radius: int = 10
+    radius: int = 20
     
 @dataclass
 class Field(Component):

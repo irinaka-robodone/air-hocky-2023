@@ -71,6 +71,9 @@ class SysControl(System):
     def process(self):
         for ent, (pos, vel, cont) in self.world.get_components(Position, Velocity, Controlable):
             
+            vel.x *= 0.95
+            vel.y *= 0.95
+            
             if pyxel.btnp(cont.up)or pyxel.btnp(cont.down)\
                 or pyxel.btnp(cont.left)or pyxel.btnp(cont.right):
                 pass
@@ -101,8 +104,12 @@ class SysCollision(System):
     
     def process(self):
         checked_pairs = []
-        for ent1, (pos1, vel1, coll1) in self.world.get_components(Position, Velocity, Collidable):
-            for ent2, (pos2, vel2, coll2) in self.world.get_components(Position, Velocity, Collidable):
+        for ent1, (pos1, vel1, coll1, puck) in self.world.get_components(Position, Velocity, Collidable, Puck):
+            for ent2, (pos2, vel2, coll2, hockey) in self.world.get_components(Position, Velocity, Collidable, Hockey):
+                
+                r1 = puck.radius
+                r2 = hockey.radius
+                
                 if ent1 == ent2:
                     continue
                 checked = False
@@ -114,7 +121,7 @@ class SysCollision(System):
                 if checked:
                     continue
                 
-                if abs(pos1.x-pos2.x) < 20 and abs(pos1.y-pos2.y) < 20:
+                if abs(pos1.x-pos2.x) < (r1 + r2) and abs(pos1.y-pos2.y) < (r1 + r2):
                     print(ent1, ent2)
                     print(vel1.x, vel1.weight, vel2.x, vel2.weight)
                     # 完全弾性衝突と見立てて衝突した後の速度を更新する。
